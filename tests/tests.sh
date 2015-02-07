@@ -7,6 +7,7 @@ echo 'Running tests'
 echo '----------------------------------------'
 echo
 echo " -- running tests with: ${AWK}"
+echo
 
 for i in [0-9]*.in
 do

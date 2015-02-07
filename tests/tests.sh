@@ -1,16 +1,19 @@
+AWK=`which gawk || which nawk || which awk`
+
 passed=0
 
 echo
 echo 'Running tests'
 echo '----------------------------------------'
 echo
+echo " -- running tests with: ${AWK}"
 
 for i in [0-9]*.in
 do
     name=`basename $i .in`
-    echo -n "${name}: "
+    printf "%s: " ${name}
 
-    nawk -f ../awkdown.awk ${name}.in > /tmp/${name}.out
+    ${AWK} -f ../awkdown.awk ${name}.in > /tmp/${name}.out
 
     diff /tmp/${name}.out ${name}.ref && echo "OK!"
     if [ $? = 0 ]

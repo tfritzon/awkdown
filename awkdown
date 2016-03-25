@@ -1,3 +1,5 @@
+#!/bin/awk -f
+
 BEGIN {
     in_paragraph= 0
     in_blockquote= 0
@@ -140,7 +142,7 @@ $0 !~ /^$/ {
 }
 
 # Finally: print the line
-{ 
+{
     if( ! emitted )
 	print
     emitted= 0

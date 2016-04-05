@@ -14,7 +14,7 @@ do
     name=`basename $i .in`
     printf "%s: " ${name}
 
-    ${AWK} -f ../awkdown.awk ${name}.in > /tmp/${name}.out
+    ${AWK} -f ../awkdown ${name}.in > /tmp/${name}.out
 
     diff /tmp/${name}.out ${name}.ref && echo "OK!"
     if [ $? = 0 ]

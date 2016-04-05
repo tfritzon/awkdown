@@ -1,3 +1,5 @@
+#!/bin/awk -f
+
 BEGIN {
     in_paragraph= 0
     in_blockquote= 0
@@ -60,11 +62,11 @@ FNR == 1 {
     n= match($0, /^#+/)
     header_lvl= RLENGTH
     repl= sprintf("<h%d>", header_lvl)
-    sub(/^#+/, repl, $0)
+    sub(/^#+ ?/, repl, $0)
 
     repl= sprintf("</h%d>", header_lvl)
     if( match($0, /#+$/) )
-	sub(/#+$/, repl, $0)
+	sub(/ ?#+$/, repl, $0)
     else
 	sub(/$/, repl, $0)
     print
@@ -140,7 +142,7 @@ $0 !~ /^$/ {
 }
 
 # Finally: print the line
-{ 
+{
     if( ! emitted )
 	print
     emitted= 0

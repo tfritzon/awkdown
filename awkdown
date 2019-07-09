@@ -7,6 +7,7 @@ BEGIN {
     in_ol= 0
     in_italics= 0
     in_bold= 0
+    in_link= 0
     emitted= 0
 }
 
@@ -97,28 +98,53 @@ FNR == 1 {
     sub(/$/, "</li>", $0)
 }
 
+# Links
+/\[.*\]\(.*\)/ {
+    in_link= 1
+    s = ""
+    if( match($0, /(\[.*\])(\(.*)( ".*"\))/, tla) ) {
+	l= substr(tla[2], 2)
+	match(tla[3], /".*"/)
+	a= substr(tla[3], RSTART, RLENGTH)
+	match(tla[1], /\[.*\]/)
+	t= substr(tla[1], RSTART+1, RLENGTH-2)
+	s= sprintf("<a href=\"%s\" alt=%s>%s</a>", l, a, t)
+    } else if( match($0, /(\[.*\])(\(.*\))/, tl) ) {
+	match(tl[2], /\(.*\)/)
+	l= substr(tl[2], RSTART+1, RLENGTH-2)
+	match(tl[1], /\[.*\]/)
+	t= substr(tl[1], RSTART+1, RLENGTH-2)
+	s= sprintf("<a href=\"%s\">%s</a>", l, t)
+    }
+    sub(/\[.*\)/, s)
+}
+
 # bold
 /[*_][*_]/ {
-    while( $0 ~ /[*_][*_]/ ) {
-	if( ! in_bold ) {
-	    sub(/[*_][*_]/, "<b>", $0)
-	    in_bold= 1
-	} else {
-	    sub(/[*_][*_]/, "</b>", $0)
-	    in_bold= 0
+    if( ! in_link ) {
+	while( $0 ~ /[*_][*_]/ ) {
+	    if( ! in_bold ) {
+		sub(/[*_][*_]/, "<b>", $0)
+		in_bold= 1
+	    } else {
+		sub(/[*_][*_]/, "</b>", $0)
+		in_bold= 0
+	    }
 	}
     }
 }
 
 # italics
 /[*_]/ {
-    while( $0 ~ /[*_]/ ) {
-	if( ! in_italics ) {
-	    sub(/[*_]/, "<i>", $0)
-	    in_italics= 1
-	} else {
-	    sub(/[*_]/, "</i>", $0)
-	    in_italics= 0
+    if( ! in_link ) {
+	while( $0 ~ /[*_]/ ) {
+	    if( ! in_italics ) {
+		sub(/[*_]/, "<i>", $0)
+		in_italics= 1
+	    } else {
+		sub(/[*_]/, "</i>", $0)
+		in_italics= 0
+	    }
 	}
     }
 }

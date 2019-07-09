@@ -25,28 +25,21 @@ FNR == 1 {
 
 # Escape all ampersands (HTML rule)
 /&/ {
-    #printf( "R1: %s", $0 )
     gsub(/&/, "\\&amp;", $0)
-    #printf( "%30s\n", $0 )
 }
 
 # Restore ampersands part of HTML character escape
 /&amp;[A-Za-z]{2,4};/ {
-    #printf( "R2: %s", $0 )
     gsub(/&amp;/, "\\&", $0)
-    #printf( "%30s\n", $0 )
 }
 
 # Escape less than (<) (HTML rule)
 /</ {
-    #printf( "R3: %s", $0 )
     gsub("<", "\\&lt;", $0)
-    #printf( "%30s\n", $0 )
 }
 
 # line break
 /^.*[ ]{2}$/ {
-    #$0= sprintf( "%s<br />", $0 )
     sub( /[ ]{2}$/, "<br />", $0 )
 }
 

@@ -1,10 +1,12 @@
-#!/bin/awk -f
+#!/usr/bin/awk -f
 
 BEGIN {
     in_paragraph= 0
     in_blockquote= 0
     in_ul= 0
     in_ol= 0
+    in_italics= 0
+    in_bold= 0
     emitted= 0
 }
 
@@ -74,7 +76,7 @@ FNR == 1 {
 }
 
 # unordered list
-/^[*+-]/ {
+/^[*+-] / {
     if( ! in_ul ) {
 	print "<ul>"
 	in_ul= 1
@@ -95,6 +97,32 @@ FNR == 1 {
     sub(/$/, "</li>", $0)
 }
 
+# bold
+/[*_][*_]/ {
+    while( $0 ~ /[*_][*_]/ ) {
+	if( ! in_bold ) {
+	    sub(/[*_][*_]/, "<b>", $0)
+	    in_bold= 1
+	} else {
+	    sub(/[*_][*_]/, "</b>", $0)
+	    in_bold= 0
+	}
+    }
+}
+
+# italics
+/[*_]/ {
+    while( $0 ~ /[*_]/ ) {
+	if( ! in_italics ) {
+	    sub(/[*_]/, "<i>", $0)
+	    in_italics= 1
+	} else {
+	    sub(/[*_]/, "</i>", $0)
+	    in_italics= 0
+	}
+    }
+}
+
 # empty line
 /^$/ {
     if( in_blockquote && (! match(nextline, /^>/)) ) {
@@ -113,6 +141,16 @@ FNR == 1 {
 	print "</ol>"
 	in_ol= 0
 	in_paragraph= 0
+    }
+
+    if( in_italics ) {
+	print "</i>"
+	in_italics= 0
+    }
+
+    if( in_bold ) {
+	print "</b>"
+	in_bold= 0
     }
 
     if( in_paragraph ) {
@@ -163,6 +201,16 @@ END {
     if( in_blockquote ) {
 	print "</p></blockquote>"
 	in_paragraph= 0
+    }
+
+    if( in_italics ) {
+	print "</i>"
+	in_italics= 0
+    }
+
+    if( in_bold ) {
+	print "</b>"
+	in_bold= 0
     }
 
     if( in_paragraph )

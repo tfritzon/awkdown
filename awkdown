@@ -81,13 +81,28 @@ FNR == 1 {
 }
 
 # ordered list
-/^[0-9]+[.]/ {
+/^(([0-9]+)|([A-Za-z])|([iIvVxXlL]{1,4}))[.]/ {
+    t= "1"
+    if( $0 ~ /[ivxl]+[.]/ ) {
+	t= "i"
+	sub(/^[ivxl]{1,4}[.][ ]*/, "<li>", $0)
+    } else if( $0 ~ /[IVXL]+[.]/ ) {
+	t= "I"
+	sub(/^[IVXL]{1,4}[.][ ]*/, "<li>", $0)
+    } else if( $0 ~ /^[A-Z]./ ) {
+	t= "A"
+	sub(/^[A-Z][.][ ]*/, "<li>", $0)
+    } else if( $0 ~ /^[a-z]./ ) {
+	t= "a"
+	sub(/^[a-z][.][ ]*/, "<li>", $0)
+    } else {
+	sub(/^[0-9]+[.][ ]*/, "<li>", $0)
+    }
     if( ! in_ol ) {
-	print "<ol>"
+	printf("<ol type=\"%s\">\n", t)
 	in_ol= 1
 	in_paragraph= 1
     }
-    sub(/^[0-9]+[.][ ]*/, "<li>", $0)
     sub(/$/, "</li>", $0)
 }
 
@@ -136,6 +151,21 @@ FNR == 1 {
 		in_italics= 1
 	    } else {
 		sub(/[*_]/, "</i>", $0)
+		in_italics= 0
+	    }
+	}
+    }
+}
+
+# strikethrough
+/~~/ {
+    if( ! in_link ) {
+	while( $0 ~ /~~/ ) {
+	    if( ! in_italics ) {
+		sub(/~~/, "<strike>", $0)
+		in_italics= 1
+	    } else {
+		sub(/~~/, "</strike>", $0)
 		in_italics= 0
 	    }
 	}

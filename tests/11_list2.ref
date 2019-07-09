@@ -1,17 +1,48 @@
-<ol>
+<ol type="1">
 <li>red</li>
 <li>green</li>
 <li>blue</li>
 </ol>
 
-<ol>
+<ol type="1">
 <li>red</li>
 <li>green</li>
 <li>blue</li>
 </ol>
 
-<ol>
+<ol type="1">
 <li>red</li>
 <li>green</li>
 <li>blue</li>
+</ol>
+
+<ol type="a">
+<li>Apa</li>
+<li>Banan</li>
+<li>Choklad</li>
+</ol>
+
+<ol type="A">
+<li>Apa</li>
+<li>Banan</li>
+<li>Choklad</li>
+</ol>
+
+<ol type="i">
+<li>Apa</li>
+<li>Banan</li>
+<li>Choklad</li>
+</ol>
+
+<ol type="I">
+<li>Apelsin</li>
+<li>Banan</li>
+<li>Choklad</li>
+<li>Dadlar</li>
+<li>Ekollon</li>
+<li>Fisk</li>
+<li>Gurka</li>
+<li>Honung</li>
+<li>Is</li>
+<li>Juice</li>
 </ol>

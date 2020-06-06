@@ -129,7 +129,7 @@ FNR == 1 {
 
 # bold
 /[*_][*_]/ {
-    if( ! in_link ) {
+    if( !in_link && !in_codeblock && !in_code ) {
 	while( $0 ~ /[*_][*_]/ ) {
 	    if( ! in_bold ) {
 		sub(/[*_][*_]/, "<b>", $0)
@@ -144,7 +144,7 @@ FNR == 1 {
 
 # italics
 /[*_]/ {
-    if( ! in_link ) {
+    if( !in_link && !in_codeblock && !in_code ) {
 	while( $0 ~ /[*_]/ ) {
 	    if( ! in_italics ) {
 		sub(/[*_]/, "<i>", $0)
@@ -159,7 +159,7 @@ FNR == 1 {
 
 # strikethrough
 /~~/ {
-    if( ! in_link ) {
+    if( !in_link && !in_codeblock && !in_code ) {
 	while( $0 ~ /~~/ ) {
 	    if( ! in_strike ) {
 		sub(/~~/, "<strike>", $0)
@@ -185,7 +185,7 @@ FNR == 1 {
 
 # code in text
 /`/ {
-    if( ! in_link ) {
+    if( !in_link ) {
 	while( $0 ~ /`/ ) {
 	    if( ! in_code ) {
 		sub(/`/, "<code>", $0)

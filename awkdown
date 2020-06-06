@@ -161,12 +161,38 @@ FNR == 1 {
 /~~/ {
     if( ! in_link ) {
 	while( $0 ~ /~~/ ) {
-	    if( ! in_italics ) {
+	    if( ! in_strike ) {
 		sub(/~~/, "<strike>", $0)
-		in_italics= 1
+		in_strike= 1
 	    } else {
 		sub(/~~/, "</strike>", $0)
-		in_italics= 0
+		in_strike= 0
+	    }
+	}
+    }
+}
+
+# code block
+/^```/ {
+    if( ! in_codeblock ) {
+	sub(/```/, "<pre>", $0)
+	in_codeblock= 1
+    } else {
+	sub(/```/, "</pre>", $0)
+	in_codeblock= 0
+    }
+}
+
+# code in text
+/`/ {
+    if( ! in_link ) {
+	while( $0 ~ /`/ ) {
+	    if( ! in_code ) {
+		sub(/`/, "<code>", $0)
+		in_code= 1
+	    } else {
+		sub(/`/, "</code>", $0)
+		in_code= 0
 	    }
 	}
     }
@@ -260,6 +286,16 @@ END {
     if( in_bold ) {
 	print "</b>"
 	in_bold= 0
+    }
+
+    if( in_strike ) {
+	print "</strike>"
+	in_code= 0
+    }
+
+    if( in_code ) {
+	print "</code>"
+	in_code= 0
     }
 
     if( in_paragraph )

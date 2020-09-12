@@ -9,6 +9,7 @@ BEGIN {
     in_italics= 0
     in_bold= 0
     in_link= 0
+    in_table= 0
     emitted= 0
 }
 
@@ -54,6 +55,27 @@ FNR == 1 {
     sub(/^>[ ]*/, "", $0)
 }
 
+# table
+/^[ ]*[|]/ {
+    #print "<!-- table -->"
+    if( ! in_table ) {
+        print "<table>"
+        in_table= 1
+        in_paragraph= 1
+    }
+    if( match($0, /---/) )
+        emitted= 1
+    else if( match(nextline, /---/) ) {
+        sub(/^[ ]*[|][ ]*/, "<tr><th>", $0)
+        sub(/[ ]*[|][ ]*$/, "</th></tr>", $0)
+        gsub(/[ ]*[|][ ]*/, "</th><th>", $0)
+    } else {
+        sub(/^[ ]*[|][ ]*/, "<tr><td>", $0)
+        sub(/[ ]*[|][ ]*$/, "</td></tr>", $0)
+        gsub(/[ ]*[|][ ]*/, "</td><td>", $0)
+    }
+}
+
 # ATX headers
 /^#/ {
     n= match($0, /^#+/)
@@ -71,21 +93,8 @@ FNR == 1 {
 }
 
 # unordered list
-# /^[*+-] / {
-#     if( ! in_ul ) {
-# 	print "<ul>"
-# 	in_ul= 1
-# 	in_paragraph= 1
-#     }
-#     sub(/^[*+-][ ]*/, "<li>", $0)
-#     sub(/$/, "</li>", $0)
-# }
-
-# unordered list
 /^[ ]*[*+-] / {
     uld= match($0, /[*+-]/)
-    #printf("ul_depth: %d, uld: %d, in_ul: %d, in_paragraph: %d\n",
-    #       ul_depth, uld, in_ul, in_paragraph)
     if( uld > ul_depth ) {
         sub(/^[ ]*[*+-][ ]*/, "<ul><li>", $0)
         in_ul++
@@ -230,6 +239,12 @@ FNR == 1 {
 	in_paragraph= 0
     }
 
+    if( in_table ) {
+        print "</table>"
+        in_table= 0
+        in_paragraph= 0
+    }
+    
     if( in_ul ) {
         while( in_ul > 0 ) {
             print "</ul>"
@@ -290,6 +305,11 @@ $0 !~ /^$/ {
 }
 
 END {
+    if( in_table ) {
+        print "</table>"
+        in_paragraph= 0
+    }
+    
     if( in_ul ) {
 	print "</ul>"
 	in_paragraph= 0

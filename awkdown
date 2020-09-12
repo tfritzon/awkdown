@@ -4,6 +4,7 @@ BEGIN {
     in_paragraph= 0
     in_blockquote= 0
     in_ul= 0
+    ul_depth= 0
     in_ol= 0
     in_italics= 0
     in_bold= 0
@@ -70,14 +71,37 @@ FNR == 1 {
 }
 
 # unordered list
-/^[*+-] / {
-    if( ! in_ul ) {
-	print "<ul>"
-	in_ul= 1
-	in_paragraph= 1
+# /^[*+-] / {
+#     if( ! in_ul ) {
+# 	print "<ul>"
+# 	in_ul= 1
+# 	in_paragraph= 1
+#     }
+#     sub(/^[*+-][ ]*/, "<li>", $0)
+#     sub(/$/, "</li>", $0)
+# }
+
+# unordered list
+/^[ ]*[*+-] / {
+    uld= match($0, /[*+-]/)
+    #printf("ul_depth: %d, uld: %d, in_ul: %d, in_paragraph: %d\n",
+    #       ul_depth, uld, in_ul, in_paragraph)
+    if( uld > ul_depth ) {
+        sub(/^[ ]*[*+-][ ]*/, "<ul><li>", $0)
+        in_ul++
+        in_paragraph= 1
+    } else if( uld < ul_depth ) {
+        sub(/^[ ]*[*+-][ ]*/, "</ul><li>", $0)
+        in_ul--
+    } else {
+        sub(/^[ ]*[*+-][ ]*/, "<li>", $0)
+    }        
+    ul_depth= uld
+
+    uld= match(nextline, /[*+-]/)
+    if( uld <= ul_depth ) {
+        sub(/$/, "</li>", $0)
     }
-    sub(/^[*+-][ ]*/, "<li>", $0)
-    sub(/$/, "</li>", $0)
 }
 
 # ordered list
@@ -207,9 +231,12 @@ FNR == 1 {
     }
 
     if( in_ul ) {
-	print "</ul>"
-	in_ul= 0
-	in_paragraph= 0
+        while( in_ul > 0 ) {
+            print "</ul>"
+            in_ul--
+        }
+        ul_depth= 0
+        in_paragraph= 0
     }
 
     if( in_ol ) {

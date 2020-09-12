@@ -1,17 +1,22 @@
-<ul>
-<li>red</li>
+<ul><li>red</li>
 <li>green</li>
 <li>blue</li>
 </ul>
 
-<ul>
-<li>red</li>
+<ul><li>red</li>
 <li>green</li>
 <li>blue</li>
 </ul>
 
-<ul>
-<li>red</li>
+<ul><li>red</li>
 <li>green</li>
 <li>blue</li>
+</ul>
+
+<ul><li>red
+<ul><li>green
+<ul><li>blue</li>
+<li>red</li>
+</ul><li>green</li>
+</ul><li>blue</li>
 </ul>

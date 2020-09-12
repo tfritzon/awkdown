@@ -20,11 +20,10 @@ do
     if [ $? = 0 ]
     then
 	passed=`expr $passed + 1`
+        rm /tmp/${name}.out
     else
 	echo "Test $i FAILED!"
     fi
-
-    rm /tmp/${name}.out
 
 done
 

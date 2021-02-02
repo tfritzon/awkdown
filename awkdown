@@ -138,23 +138,22 @@ FNR == 1 {
 }
 
 # Links
-/\[.+\]\([^\)]+\)/ {
+/\[.+?\]\([^\)]+?\)/ {
 	in_link= 1
 	s = ""
 	# tla is text-link-alt
-	if(match($0, /\[([^\]]+)\]\(([^[:blank:]\)]+)([[:blank:]]+"[^"]+"[[:blank:]]*)?\)/, tla) ) {
-	#"
+	while( match($0, /\[([^\]]+)\]\(([^[:blank:]\)]+)([[:blank:]]+"[^"]+"[[:blank:]]*)?\)/, tla ) ) {
 		text= tla[1]
 		link= tla[2]
 		alt= 	tla[3]
 		if (length(alt) != 0){
-			sub(/^[[:blank:]]+/,"",alt)
-			sub(/[[:blank:]]+$/,"",alt)
+			sub(/^[[:blank:]]+/,"", alt)
+			sub(/[[:blank:]]+$/,"", alt)
 			alt= sprintf(" alt=%s", alt)
 		}
 		s= sprintf("<a href=\"%s\"%s>%s</a>", link, alt, text)
+		sub(/\[([^\]]+)\]\(([^[:blank:]\)]+)([[:blank:]]+"[^"]+"[[:blank:]]*)?\)/, s,$0)
 	}
-	sub(/\[.*\)/, s)
 }
 
 # bold
